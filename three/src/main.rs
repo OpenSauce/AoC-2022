@@ -20,7 +20,7 @@ fn main() {
     let lines: Vec<&str> = contents.lines().collect();
     let mut total = 0;
     let mut i = 0;
-    while i < lines.len() - 2 {
+    while i < lines.len() {
         total += get_badges(lines[i], lines[i + 1], lines[i + 2]);
         i += 3
     }
