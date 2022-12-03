@@ -8,9 +8,8 @@ fn main() {
 
     let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
 
-    let lines = contents.lines();
     let mut total = 0;
-    for line in lines {
+    for line in contents.lines() {
         let packages = line.split_at(line.len() / 2);
         total += get_priority(packages.0, packages.1)
     }

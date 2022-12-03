@@ -6,11 +6,10 @@ fn main() {
     let file_path = &args[1];
 
     let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
-    let lines = contents.lines();
 
     let mut total = 0;
     let mut total2 = 0;
-    for line in lines {
+    for line in contents.lines() {
         let ops: Vec<&str> = line.split(" ").collect();
 
         total += match_result(ops[0], ops[1]);
