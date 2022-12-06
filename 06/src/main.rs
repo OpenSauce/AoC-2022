@@ -8,37 +8,21 @@ fn main() {
 
     let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
 
-    let cpy = contents.clone();
-
-    exercise_one(contents);
-
-    exercise_two(cpy);
+    println!("{}", calculate(contents.as_str(), 4));
+    println!("{}", calculate(contents.as_str(), 14));
 }
 
-fn exercise_one(contents: String) {
+fn calculate(contents: &str, n: usize) -> usize {
     let mut start = 0;
-    let mut end = 4;
+    let mut end = n;
     while end < contents.len() {
         if all_unique(&contents[start..end]) {
-            println!("{}", end);
-            return;
+            return end;
         }
         start += 1;
         end += 1;
     }
-}
-
-fn exercise_two(contents: String) {
-    let mut start = 0;
-    let mut end = 14;
-    while end < contents.len() {
-        if all_unique(&contents[start..end]) {
-            println!("{}", end);
-            return;
-        }
-        start += 1;
-        end += 1;
-    }
+    return 0;
 }
 
 fn all_unique(s: &str) -> bool {
@@ -47,7 +31,6 @@ fn all_unique(s: &str) -> bool {
         if seen.contains_key(&c) {
             return false;
         }
-
         seen.insert(c, true);
     }
     return true;
