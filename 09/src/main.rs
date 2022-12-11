@@ -1,6 +1,6 @@
 #![feature(int_roundings)]
 
-use std::collections::HashMap;
+use std::collections::HashSet;
 use std::env;
 use std::fs;
 
@@ -9,20 +9,20 @@ fn main() {
     let file_path = &args[1];
     let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
 
-    let mut seen: HashMap<String, bool> = HashMap::new();
+    let mut seen: HashSet<(i32, i32)> = HashSet::new();
 
     // initial state
     let mut head = Node { x: 0, y: 0 };
     let mut tail = Node { x: 0, y: 0 };
 
-    seen.insert(tail.x.to_string() + ":" + &tail.y.to_string(), true);
+    seen.insert((tail.x, tail.y));
 
     for line in contents.lines() {
         let ops: Vec<&str> = line.split(" ").collect();
         for _ in 0..ops[1].parse().unwrap() {
             move_head(&mut head, ops[0]);
             move_tail(&head, &mut tail);
-            seen.insert(tail.x.to_string() + ":" + &tail.y.to_string(), true);
+            seen.insert((tail.x, tail.y));
         }
     }
 
@@ -30,7 +30,7 @@ fn main() {
 
     let mut knots = vec![Node::new(); 10];
 
-    let mut seen2: HashMap<String, bool> = HashMap::new();
+    let mut seen2: HashSet<(i32, i32)> = HashSet::new();
 
     for line in contents.lines() {
         let ops: Vec<&str> = line.split(" ").collect();
@@ -40,7 +40,7 @@ fn main() {
                 let cpy = (&mut knots[i - 1]).clone();
                 move_tail(&cpy, &mut knots[i]);
             }
-            seen2.insert(knots[9].x.to_string() + ":" + &knots[9].y.to_string(), true);
+            seen2.insert((knots[9].x, knots[9].y));
         }
     }
 
