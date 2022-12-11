@@ -26,7 +26,25 @@ fn main() {
         }
     }
 
-    println!("{}", seen.iter().count())
+    println!("{}", seen.iter().count());
+
+    let mut knots = vec![Node::new(); 10];
+
+    let mut seen2: HashMap<String, bool> = HashMap::new();
+
+    for line in contents.lines() {
+        let ops: Vec<&str> = line.split(" ").collect();
+        for _ in 0..ops[1].parse().unwrap() {
+            move_head(&mut knots[0], ops[0]);
+            for i in 1..10 {
+                let cpy = (&mut knots[i - 1]).clone();
+                move_tail(&cpy, &mut knots[i]);
+            }
+            seen2.insert(knots[9].x.to_string() + ":" + &knots[9].y.to_string(), true);
+        }
+    }
+
+    println!("{}", seen2.iter().count());
 }
 
 fn move_head(head: &mut Node, dir: &str) {
@@ -61,7 +79,20 @@ fn move_tail(head: &Node, tail: &mut Node) {
     }
 }
 
+impl Default for Node {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[derive(Debug, Clone)]
 struct Node {
     x: i32,
     y: i32,
+}
+
+impl Node {
+    pub fn new() -> Self {
+        Node { x: 0, y: 0 }
+    }
 }
