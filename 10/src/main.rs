@@ -20,9 +20,7 @@ fn main() {
         }
     }
 
-    let mut x = 1;
-    let mut cycle = 0;
-    let mut sum = 0;
+    let (mut x, mut cycle, mut sum) = (1, 0, 0);
     for op in ops.clone() {
         if cycle % 40 == 0 {
             println!();
