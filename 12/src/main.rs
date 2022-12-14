@@ -11,57 +11,83 @@ fn main() {
         grid.push(line.chars().collect());
     }
 
-    println!("{}", dfs(&mut grid, 0, 0, 0, 'E'));
+    println!("{}", bfs(&mut grid.clone(), 0, 20));
 
-    for row in grid {
-        for c in row {
-            print!("{}", c)
+    let mut lowest = usize::MAX;
+    for i in 0..grid.len() - 1 {
+        for j in 0..grid[0].len() - 1 {
+            if grid[i][j] == 'a' || grid[i][j] == 'S' {
+                let value = bfs(&mut grid.clone(), j, i);
+                if value < lowest {
+                    lowest = value;
+                }
+            }
         }
-        println!();
     }
+
+    println!("{}", lowest);
 }
 
-fn dfs(grid: &mut Vec<Vec<char>>, i: usize, j: usize, c: usize, t: char) -> usize {
-    if grid[i][j] == t {
-        return c;
+fn bfs(grid: &mut Vec<Vec<char>>, startx: usize, starty: usize) -> usize {
+    let mut queue: Vec<Point> = Vec::new();
+    let mut count = 0;
+
+    queue.push(Point {
+        x: startx,
+        y: starty,
+    });
+    while queue.len() > 0 {
+        let len = queue.len();
+        for _ in 0..len {
+            let v = queue.remove(0);
+            let i = v.y;
+            let j = v.x;
+
+            if grid[i][j] == 'E' {
+                return count;
+            }
+
+            if grid[i][j] == '.' {
+                continue;
+            }
+
+            if i < grid.len() - 1 && (gai(grid[i + 1][j]) - gai(grid[i][j]) <= 1) {
+                queue.push(Point { x: v.x, y: v.y + 1 })
+            }
+
+            if i > 0 && (gai(grid[i - 1][j]) - gai(grid[i][j]) <= 1) {
+                queue.push(Point { x: v.x, y: v.y - 1 })
+            }
+
+            if j < grid[0].len() - 1 && (gai(grid[i][j + 1]) - gai(grid[i][j]) <= 1) {
+                queue.push(Point { x: v.x + 1, y: v.y })
+            }
+
+            if j > 0 && (gai(grid[i][j - 1]) - gai(grid[i][j]) <= 1) {
+                queue.push(Point { x: v.x - 1, y: v.y })
+            }
+
+            grid[i][j] = '.';
+        }
+
+        count += 1;
     }
 
-    let mut up = usize::MAX;
-    if i < grid.len() - 1
-        && (gai(grid[i + 1][j]) - gai(grid[i][j]) == 1
-            || gai(grid[i + 1][j]) - gai(grid[i][j]) == 0)
-    {
-        up = dfs(grid, i + 1, j, c + 1, t);
-    }
+    return usize::MAX;
+}
 
-    let mut down = usize::MAX;
-    if i > 0
-        && (gai(grid[i - 1][j]) - gai(grid[i][j]) == 1
-            || gai(grid[i - 1][j]) - gai(grid[i][j]) == 0)
-    {
-        down = dfs(grid, i - 1, j, c + 1, t);
-    }
-
-    let mut right = usize::MAX;
-    if j < grid[0].len() - 1
-        && (gai(grid[i][j + 1]) - gai(grid[i][j]) == 1
-            || gai(grid[i][j + 1]) - gai(grid[i][j]) == 0)
-    {
-        right = dfs(grid, i, j + 1, c + 1, t);
-    }
-
-    let mut left = usize::MAX;
-    if j > 0
-        && (gai(grid[i][j - 1]) - gai(grid[i][j]) == 1
-            || gai(grid[i][j - 1]) - gai(grid[i][j]) == 0)
-    {
-        left = dfs(grid, i, j - 1, c + 1, t);
-    }
-
-    return right.min(left.min(up.min(down)));
+struct Point {
+    x: usize,
+    y: usize,
 }
 
 fn gai(c: char) -> i32 {
+    if c == 'E' {
+        return gai('z');
+    }
+    if c == 'S' {
+        return gai('a');
+    }
     if (c as i32) < 97 {
         return (c as i32) - 38;
     }
